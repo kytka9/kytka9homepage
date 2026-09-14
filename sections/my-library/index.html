@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moja Osobná Knižnica (Excel style)</title>
+    <style>
+    
+        :root {
+            --excel-green: #107c41;
+            --excel-green-dark: #0a4f29;
+            --excel-light-green: #f3fcf7;
+            --excel-border: #d0d0d0;
+            --excel-header-bg: #f3f3f3;
+            --excel-text: #333333;
+            --my-clr: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+            color: var(--excel-text);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        /* Ribbon / Header */
+        header {
+            background-color: var(--excel-green);
+            color: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats {
+            font-size: 14px;
+            background: var(--excel-green-dark);
+            padding: 5px 12px;
+            border-radius: 4px;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background-color: #f9f9f9;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--excel-border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--excel-green);
+            box-shadow: 0 0 0 2px rgba(16, 124, 65, 0.15);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filters select, .btn-reset {
+            padding: 8px 12px;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .filters select:focus {
+            border-color: var(--excel-green);
+        }
+
+        .btn-reset {
+            background-color: #fff;
+            color: #555;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background-color: #e5e5e5;
+            color: #000;
+        }
+
+        /* Table Area */
+        .table-responsive {
+            overflow-x: auto;
+            max-height: 70vh;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: var(--excel-header-bg);
+            color: #444;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            user-select: none;
+            cursor: pointer;
+            border-bottom: 2px solid var(--excel-border);
+        }
+
+        th:hover {
+            background-color: #e5e5e5;
+        }
+
+        th .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 10px;
+            color: #888;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+
+        tr:hover {
+            background-color: var(--excel-light-green);
+        }
+
+        /* Status Tags / Formatting */
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-damage {
+            background-color: #fde8e8;
+            color: #e02424;
+            border: 1px solid #fbd5d5;
+        }
+
+        .badge-fixed {
+            background-color: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+
+        .badge-soft {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+
+        /* Footer / Status bar */
+        footer {
+            background-color: #f3f3f3;
+            border-top: 1px solid var(--excel-border);
+            padding: 8px 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+                    <rect x="4" y="4" width="16" height="16" rx="2" fill="white"/>
+                    <path d="M7 7H11V11H7V7Z" fill="#107C41"/>
+                    <path d="M13 7H17V11H13V7Z" fill="#107C41"/>
+                    <path d="M7 13H11V17H7V13Z" fill="#107C41"/>
+                    <path d="M13 13H17V17H13V13Z" fill="#107C41"/>
+                </svg>
+                Osobná Knižnica (Excel list)
+            </h1>
+            <div class="stats" id="stats-counter">
+                Celkom kníh: 0 | Celkom strán: 0
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Hľadať podľa názvu, autora, ISBN, vydavateľa...">
+            </div>
+            <div class="filters">
+                <select id="filter-category">
+                    <option value="">Všetky kategórie</option>
+                </select>
+                <select id="filter-language">
+                    <option value="">Všetky jazyky</option>
+                </select>
+                <select id="filter-binding">
+                    <option value="">Všetky väzby</option>
+                </select>
+                <button id="btn-reset" class="btn-reset" title="Vynulovať filtre">✕ Reset</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="books-table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('title')">Názov <span class="sort-icon" id="sort-title">↕</span></th>
+                        <th onclick="sortTable('titleEn')">Anglický/originálny názov <span class="sort-icon" id="sort-titleEn">↕</span></th>
+                        <th onclick="sortTable('author')">Autor <span class="sort-icon" id="sort-author">↕</span></th>
+                        <th onclick="sortTable('isbn')">ISBN <span class="sort-icon" id="sort-isbn">↕</span></th>
+                        <th onclick="sortTable('year')">Rok vydania <span class="sort-icon" id="sort-year">↕</span></th>
+                        <th onclick="sortTable('publisher')">Vydavateľ <span class="sort-icon" id="sort-publisher">↕</span></th>
+                        <th onclick="sortTable('category')">Kategorizácia <span class="sort-icon" id="sort-category">↕</span></th>
+                        <th onclick="sortTable('language')">Jazyk <span class="sort-icon" id="sort-language">↕</span></th>
+                        <th onclick="sortTable('pageCount')">Počet strán <span class="sort-icon" id="sort-pageCount">↕</span></th>
+                        <th onclick="sortTable('binding')">Väzba <span class="sort-icon" id="sort-binding">↕</span></th>
+                        <th onclick="sortTable('notes')">Poznámky <span class="sort-icon" id="sort-notes">↕</span></th>
+                    </tr>
+                </thead>
+                <tbody id="books-body">
+                    <!-- Data rows dynamic rendering -->
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <span>List1</span>
+            <span id="rendered-count">Zobrazené: 0 z 0</span>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
