@@ -1,33 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="sk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HomePage</title>
-  <style>
-    button {
-      color: rgb(252, 0, 0);
-      font-size: larger;
-      cursor: pointer;
+<meta charset="UTF-8">
+<style>
+    body { margin: 0; font-family: Arial, sans-serif; }
+
+    header a {
+        display: block;
+        padding: 15px;
+        text-align: center;
+        background: #eee;
+        color: #222;
+        text-decoration: none;
+        font-size: 16px;
+        transition: background 0.2s;
     }
-  </style>
-  
+    header a:hover { background: #ddd; }
+</style>
 </head>
-
 <body>
-  <header>
-    <nav>
-      <ul>
-        <li><a href="https://kytka9.github.io/kytka9notes/"><button>kytka9notes</button></a>
-        <li><a href="./trash/index.html"><button>TRASH INDEX</button></a>
-        </li>
-      </ul>
-    </nav>
-  </header>
 
-
+<header>
+    <a href="./sections/my-library/index.html">Knižnica</a>
+    <a href="./sections/spelling-table/index.html">Hláskovacia tabulka</a>
+    <a href="./freecodecamp.html">freeCodeCamp poznámky</a>
+</header>
 
 </body>
-
 </html>

@@ -101,7 +101,7 @@ function showCurrent() {
   $("letterLabel").textContent = "Tvoje písmeno";
   $("hint").textContent = "Aké je jeho hláskovacie heslo?";
   $("reveal").disabled = false;
-  $("reveal").textContent = "👁 Ukázať heslo";
+  $("reveal").textContent = "Ukázať heslo";
   $("next").disabled = false;
   $("next").textContent = "Ďalšie písmeno →";
   $("counter").textContent =
