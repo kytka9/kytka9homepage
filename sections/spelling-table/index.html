@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101827">
+  <title>Hláskovací tréning</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>Hláskovací tréning</h1>
+        <div class="subtitle">
+          Pozri. Povedz. Over. Pokračuj.
+        </div>
+      </div>
+      <button class="small-btn" id="fullscreen" aria-label="Prepnúť zobrazenie na celú obrazovku"
+        title="Celá obrazovka">
+        ⛶
+      </button>
+    </header>
+    <section class="settings">
+      <div class="setting-row">
+        <label for="system">Spôsob hláskovania</label>
+        <select id="system">
+          <option value="sk">Slovenské</option>
+          <option value="international">Medzinárodné (ICAO/NATO)</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label for="shuffle">Náhodné poradie</label>
+        <input type="checkbox" id="shuffle" checked>
+      </div>
+      <div class="setting-row">
+        <label for="repeat">Opakovať po dokončení</label>
+        <input type="checkbox" id="repeat" checked>
+      </div>
+    </section>
+    <section class="progress-wrap">
+      <div class="progress-info">
+        <span id="counter">Písmeno 1 z 34</span>
+        <span id="remaining">Zostáva 34</span>
+      </div>
+      <div class="progress" role="progressbar" aria-label="Priebeh tréningu" aria-valuemin="0" aria-valuemax="100"
+        aria-valuenow="0" id="progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </section>
+    <section class="letter-card" aria-live="polite">
+      <div class="eyebrow" id="letterLabel">Tvoje písmeno</div>
+      <div class="letter" id="letter">A</div>
+      <div class="hint" id="hint">
+        Aké je jeho hláskovacie heslo?
+      </div>
+      <div class="answer hidden" id="answer">Adam</div>
+    </section>
+    <section class="controls">
+      <button class="btn btn-reveal" id="reveal">
+        👁 Ukázať heslo
+      </button>
+      <button class="btn btn-next" id="next">
+        Ďalšie písmeno →
+      </button>
+      <button class="btn btn-restart" id="restart">
+        ↻ Začať odznova
+      </button>
+    </section>
+    <div class="footer">
+      github.com/kytka9
+    </div>
+  </main>
+
+  <script src="./script.js"></script>
+
+</body>
+
+</html>

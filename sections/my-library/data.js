@@ -1,5 +1,21 @@
 const booksData = [
 
+
+//  {
+//         title: "",
+//         titleEn: "",
+//         author: "",
+//         isbn: "",
+//         year: ,
+//         publisher: "",
+//         category: "",
+//         language: "",
+//         pageCount: 215,
+//         binding: "",
+//         notes: ""
+//     },
+
+
     {
         title: "Ako nepodľahnúť diablovi",
         titleEn: "Outwitting the Devil",

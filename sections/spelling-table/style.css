@@ -1,0 +1,258 @@
+:root {
+    color-scheme: dark;
+    --bg: #101827;
+    --panel: #1b2638;
+    --text: #f8fafc;
+    --muted: #a8b5c8;
+    --accent: #d8d8d8;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: max(18px, env(safe-area-inset-top)) 18px
+        max(18px, env(safe-area-inset-bottom));
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+    display: flex;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button,
+select {
+    font: inherit;
+}
+
+.app {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+h1 {
+    font-size: 23px;
+    margin: 0;
+    letter-spacing: -0.6px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.small-btn {
+    border: 1px solid #38465b;
+    background: var(--panel);
+    color: white;
+    border-radius: 12px;
+    padding: 11px 14px;
+    cursor: pointer;
+}
+
+.settings {
+    background: var(--panel);
+    border: 1px solid #2c3b51;
+    border-radius: 18px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+}
+
+select {
+    max-width: 65%;
+    background: #101827;
+    color: white;
+    border: 1px solid #46546a;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+}
+
+.progress-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.progress {
+    height: 6px;
+    background: #29364a;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    transition: width 0.2s;
+}
+
+.letter-card {
+    background: var(--panel);
+    border: 1px solid #2c3b51;
+    border-radius: 28px;
+    min-height: 300px;
+    padding: 25px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+}
+
+.eyebrow {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.letter {
+    font-size: clamp(85px, 27vw, 150px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -3px;
+    overflow-wrap: anywhere;
+}
+
+.hint {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.answer {
+    color: var(--accent);
+    font-size: clamp(27px, 8vw, 39px);
+    font-weight: 750;
+    min-height: 48px;
+    overflow-wrap: anywhere;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.btn {
+    width: 100%;
+    min-height: 64px;
+    border: 0;
+    border-radius: 18px;
+    font-size: 18px;
+    font-weight: 750;
+    cursor: pointer;
+    padding: 14px 18px;
+    touch-action: manipulation;
+}
+
+.btn:active,
+.small-btn:active {
+    transform: scale(0.98);
+}
+
+.btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.btn-reveal {
+    background: #293a50;
+    color: white;
+    border: 1px solid #40516a;
+}
+
+.btn-next {
+    min-height: 74px;
+    background: var(--accent);
+    color: #09251b;
+    font-size: 20px;
+}
+
+.btn-restart {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid #344258;
+    min-height: 50px;
+    font-size: 15px;
+}
+
+.footer {
+    color: #8190a6;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+@media (max-height: 700px) {
+    .app {
+        gap: 11px;
+    }
+
+    .letter-card {
+        min-height: 210px;
+        padding: 14px;
+    }
+
+    .letter {
+        font-size: clamp(70px, 22vh, 115px);
+    }
+
+    .btn {
+        min-height: 54px;
+    }
+
+    .btn-next {
+        min-height: 60px;
+    }
+}
