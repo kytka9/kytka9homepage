@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: white;
+        color: black;
+    }
+
+    header a {
+        display: block;
+        padding: 15px;
+        text-align: center;
+        background: #eee;
+        color: #222;
+        text-decoration: none;
+        font-size: 16px;
+        transition: background 0.2s;
+    }
+
+    header a:hover { background: #ddd; }
+
+    .dark {
+        background: #222;
+        color: white;
+    }
+
+    .dark header a {
+        background: #333;
+        color: white;
+    }
+
+    .dark header a:hover { background: #444; }
+
+    button {
+        margin: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<button onclick="darkMode()">Zmeniť režim</button>
+
+<header>
+    <a href="./sections/my-library/index.html">Knižnica</a>
+    <a href="./sections/spelling-table/index.html">Hláskovacia tabulka</a>
+    <a href="./freecodecamp.html">freeCodeCamp poznámky</a>
+</header>
+
+<script>
+function darkMode() {
+    document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>
