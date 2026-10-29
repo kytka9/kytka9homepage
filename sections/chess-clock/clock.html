@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Šachové hodiny</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111827;
+      --panel: #1f2937;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --accent: #ffffff;
+      --danger: #fe0026;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: max(12px, env(safe-area-inset-top)) 14px max(12px, env(safe-area-inset-bottom));
+    }
+    main {
+      width: min(100%, 560px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    h1 { margin: 0; text-align: center; font-size: 1.25rem; }
+    .settings, .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .settings {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    label { color: var(--muted); font-size: .9rem; }
+    select, button {
+      font: inherit;
+      border: 0;
+      border-radius: 12px;
+      min-height: 46px;
+    }
+    select {
+      color: var(--text);
+      background: #374151;
+      padding: 0 12px;
+    }
+    .clock {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      padding: 18px 12px;
+      border: 3px solid transparent;
+      border-radius: 22px;
+      background: var(--panel);
+      transition: border-color .15s, background .15s;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+    .clock.active { border-color: var(--accent); background: #495fba; }
+    .clock.finished { border-color: var(--danger); }
+    .player { color: var(--muted); font-size: .95rem; }
+    /* Čierny hráč sedí oproti bielemu, preto má svoje hodiny otočené. */
+    #blackClock .player,
+    #blackClock .time,
+    #blackClock .hint {
+      transform: rotate(180deg);
+    }
+    .time {
+      font-variant-numeric: tabular-nums;
+      font-weight: 750;
+      letter-spacing: .02em;
+      font-size: clamp(3.4rem, 15vw, 6.5rem);
+      line-height: 1;
+    }
+    .hint { color: var(--muted); font-size: .8rem; }
+    button {
+      padding: 0 18px;
+      color: #111827;
+      background: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    button.secondary { background: #374151; color: var(--text); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    #status { min-height: 1.4em; text-align: center; color: var(--muted); }
+    @media (orientation: landscape) and (min-width: 600px) {
+      main { width: min(100%, 900px); }
+      .clock { min-height: 170px; }
+      .time { font-size: clamp(3rem, 9vw, 5rem); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Šachové hodiny</h1>
+
+    <section class="settings" aria-label="Nastavenie času">
+      <label for="minutes">Čas na hráča:</label>
+      <select id="minutes">
+        <option value="5">5 min</option>
+        <option value="10" selected>10 min</option>
+        <option value="15">15 min</option>
+        <option value="20">20 min</option>
+      </select>
+    </section>
+
+    <button class="clock" id="blackClock" aria-label="Čierny hráč, stlač po ťahu">
+      <span class="player">ČIERNY</span>
+      <span class="time" id="blackTime">10:00</span>
+    </button>
+
+    <div id="status" role="status" aria-live="polite">Vyber čas a stlač „Štart“.</div>
+
+    <button class="clock" id="whiteClock" aria-label="Biely hráč, stlač po ťahu">
+      <span class="player">BIELY</span>
+      <span class="time" id="whiteTime">10:00</span>
+    </button>
+
+    <section class="controls" aria-label="Ovládanie hodín">
+      <button id="startPause">Štart</button>
+      <button id="reset" class="secondary">Reset</button>
+    </section>
+  </main>
+
+  <script>
+    const minutesSelect = document.querySelector("#minutes");
+    const whiteClock = document.querySelector("#whiteClock");
+    const blackClock = document.querySelector("#blackClock");
+    const whiteTime = document.querySelector("#whiteTime");
+    const blackTime = document.querySelector("#blackTime");
+    const status = document.querySelector("#status");
+    const startPause = document.querySelector("#startPause");
+    const resetButton = document.querySelector("#reset");
+
+    let initialTime = Number(minutesSelect.value) * 60;
+    let remaining = { white: initialTime, black: initialTime };
+    let activePlayer = "white";
+    let running = false;
+    let gameOver = false;
+    let lastTick = null;
+    let timerId = null;
+
+    function formatTime(seconds) {
+      const safeSeconds = Math.max(0, Math.ceil(seconds));
+      const mins = Math.floor(safeSeconds / 60);
+      const secs = safeSeconds % 60;
+      return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function render() {
+      whiteTime.textContent = formatTime(remaining.white);
+      blackTime.textContent = formatTime(remaining.black);
+      whiteClock.classList.toggle("active", running && activePlayer === "white");
+      blackClock.classList.toggle("active", running && activePlayer === "black");
+      whiteClock.classList.toggle("finished", gameOver && remaining.white <= 0);
+      blackClock.classList.toggle("finished", gameOver && remaining.black <= 0);
+      startPause.textContent = running ? "Pauza" : (gameOver ? "Koniec partie" : "Štart");
+      startPause.disabled = gameOver;
+      minutesSelect.disabled = running;
+    }
+
+    function stopTimer() {
+      if (timerId !== null) clearInterval(timerId);
+      timerId = null;
+      running = false;
+    }
+
+    function tick() {
+      if (!running || lastTick === null) return;
+      const now = performance.now();
+      const elapsed = (now - lastTick) / 1000;
+      lastTick = now;
+      remaining[activePlayer] -= elapsed;
+
+      if (remaining[activePlayer] <= 0) {
+        remaining[activePlayer] = 0;
+        const loser = activePlayer === "white" ? "Biely" : "Čierny";
+        stopTimer();
+        gameOver = true;
+        status.textContent = `Čas vypršal — ${loser} prehráva na čas.`;
+      }
+      render();
+    }
+
+    function start() {
+      if (gameOver || running) return;
+      running = true;
+      lastTick = performance.now();
+      timerId = setInterval(tick, 100);
+      status.textContent = activePlayer === "white" ? "Na ťahu je biely." : "Na ťahu je čierny.";
+      render();
+    }
+
+    function switchTurn(player) {
+      if (!running || gameOver || player !== activePlayer) return;
+      tick();
+      if (gameOver) return;
+      activePlayer = activePlayer === "white" ? "black" : "white";
+      lastTick = performance.now();
+      status.textContent = activePlayer === "white" ? "Na ťahu je biely." : "Na ťahu je čierny.";
+      render();
+    }
+
+    function reset() {
+      stopTimer();
+      initialTime = Number(minutesSelect.value) * 60;
+      remaining = { white: initialTime, black: initialTime };
+      activePlayer = "white";
+      gameOver = false;
+      lastTick = null;
+      status.textContent = "Pripravené. Biely začína — stlač „Štart“.";
+      render();
+    }
+
+    startPause.addEventListener("click", () => {
+      if (running) {
+        tick();
+        if (!gameOver) {
+          stopTimer();
+          status.textContent = "Hodiny sú pozastavené.";
+          render();
+        }
+      } else {
+        start();
+      }
+    });
+    resetButton.addEventListener("click", reset);
+    minutesSelect.addEventListener("change", reset);
+    whiteClock.addEventListener("click", () => switchTurn("white"));
+    blackClock.addEventListener("click", () => switchTurn("black"));
+
+    // Keď sa hráč vráti do prehliadača, odpočíta sa aj čas strávený na pozadí.
+    document.addEventListener("visibilitychange", () => {
+      if (running && !document.hidden) tick();
+    });
+
+    reset();
+  </script>
+</body>
+</html>
